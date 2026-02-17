@@ -1,10 +1,11 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { MENU_ITEMS, CAFE_INFO } from "../constants.tsx";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 export async function getFoodRecommendation(userQuery: string) {
+  // Initialize right before usage to ensure the environment/key is ready
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  
   const menuSummary = MENU_ITEMS.map(item => `${item.name} (${item.category}): ${item.description} - ${item.price}`).join('\n');
   
   const systemInstruction = `
