@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { Hero } from './components/Hero';
-import { Menu } from './components/Menu';
-import { Reviews } from './components/Reviews';
-import { Contact } from './components/Contact';
-import { AIAssistant } from './components/AIAssistant';
-import { Navbar } from './components/Navbar';
-import { Footer } from './components/Footer';
+import { Hero } from './components/Hero.tsx';
+import { Menu } from './components/Menu.tsx';
+import { Reviews } from './components/Reviews.tsx';
+import { Contact } from './components/Contact.tsx';
+import { AIAssistant } from './components/AIAssistant.tsx';
+import { Navbar } from './components/Navbar.tsx';
+import { Footer } from './components/Footer.tsx';
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
