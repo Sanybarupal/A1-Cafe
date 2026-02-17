@@ -1,0 +1,7 @@
+{
+  "name": "A1cafe - Taste the Excellence",
+  "description": "Premium digital experience for A1cafe, Ramsinghpur. Featuring our signature burgers, pizzas, and an AI-powered Taste Buddy to help you choose your perfect meal.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
