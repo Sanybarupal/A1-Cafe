@@ -5,7 +5,15 @@ import { MenuItem } from '../types.ts';
 
 export const Menu: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('All');
-  const categories = ['All', 'Pizzas', 'Burgers', 'Sandwiches', 'Chinese', 'Pasta', 'Snacks', 'Drinks'];
+  const categories = [
+    'All', 
+    'Beverages', 
+    'Burgers & Sandwiches', 
+    'Pizzas', 
+    'Pasta & Chinese', 
+    'Snacks & Sides', 
+    'Desserts'
+  ];
 
   const filteredItems = activeCategory === 'All' 
     ? MENU_ITEMS 
@@ -18,7 +26,7 @@ export const Menu: React.FC = () => {
         <h3 className="text-4xl md:text-5xl font-serif font-bold text-gray-900">Our Signature Menu</h3>
       </div>
 
-      <div className="flex overflow-x-auto pb-8 mb-12 scrollbar-hide space-x-4 justify-start md:justify-center no-scrollbar">
+      <div className="flex overflow-x-auto pb-8 mb-12 scrollbar-hide space-x-4 justify-start lg:justify-center no-scrollbar">
         {categories.map((cat) => (
           <button
             key={cat}
