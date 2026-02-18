@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
-import { MENU_ITEMS } from '../constants';
-import { MenuItem } from '../types';
+import { MENU_ITEMS } from '../constants.tsx';
+import { MenuItem } from '../types.ts';
 
 export const Menu: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('All');
-  const categories = ['All', 'Burgers', 'Pizzas', 'Sandwiches', 'Sides', 'Drinks'];
+  const categories = ['All', 'Pizzas', 'Burgers', 'Sandwiches', 'Chinese', 'Pasta', 'Snacks', 'Drinks'];
 
   const filteredItems = activeCategory === 'All' 
     ? MENU_ITEMS 
@@ -39,6 +39,11 @@ export const Menu: React.FC = () => {
           <MenuItemCard key={item.id} item={item} />
         ))}
       </div>
+      
+      <div className="mt-16 bg-orange-50 p-8 rounded-[40px] text-center">
+        <p className="text-orange-800 font-bold text-lg italic">"Quality is Our Recipe"</p>
+        <p className="text-orange-600 text-sm mt-2">Orders take 20-25 minutes • Last Order at 10:30 PM</p>
+      </div>
     </div>
   );
 };
@@ -68,7 +73,7 @@ const MenuItemCard: React.FC<{ item: MenuItem }> = ({ item }) => {
             {item.name}
           </h4>
         </div>
-        <p className="text-gray-500 text-sm leading-relaxed">
+        <p className="text-gray-500 text-sm leading-relaxed min-h-[40px]">
           {item.description}
         </p>
         <div className="pt-4 flex items-center justify-between">

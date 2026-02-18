@@ -4,7 +4,7 @@ export interface MenuItem {
   name: string;
   description: string;
   price: string;
-  category: 'Burgers' | 'Pizzas' | 'Sandwiches' | 'Sides' | 'Drinks';
+  category: 'Burgers' | 'Pizzas' | 'Sandwiches' | 'Chinese' | 'Pasta' | 'Snacks' | 'Drinks';
   image: string;
   popular?: boolean;
 }

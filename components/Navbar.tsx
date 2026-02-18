@@ -10,6 +10,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection }) => {
 
   const navLinks = [
     { id: 'home', label: 'Home' },
+    { id: 'offers', label: 'Offers' },
     { id: 'menu', label: 'Menu' },
     { id: 'reviews', label: 'Reviews' },
     { id: 'contact', label: 'Location' },
