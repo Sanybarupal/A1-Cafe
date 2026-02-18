@@ -69,8 +69,8 @@ export const Contact: React.FC = () => {
           </div>
           
           {/* Interactive Map Side */}
-          <div className="h-[500px] lg:h-auto relative group">
-             <div className="absolute inset-0 bg-orange-600/10 pointer-events-none z-10 group-hover:bg-transparent transition-colors duration-500"></div>
+          <div className="h-[500px] lg:h-auto relative">
+             {/* Map is now full color and fully interactive without an overlay blocking input */}
              <iframe 
                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3460.1030386701833!2d73.535492!3d29.3524948!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3914090013b53f65%3A0xd9966113b1900f86!2sA1cafe!5e0!3m2!1sen!2sin!4v1715421234567!5m2!1sen!2sin" 
                width="100%" 
@@ -79,13 +79,14 @@ export const Contact: React.FC = () => {
                allowFullScreen 
                loading="lazy" 
                referrerPolicy="no-referrer-when-downgrade"
-               className="grayscale contrast-[1.1] brightness-[0.8] hover:grayscale-0 hover:brightness-100 transition-all duration-700"
+               title="A1cafe Google Maps Location"
+               className="w-full h-full transition-opacity duration-300"
              ></iframe>
              
-             {/* Map Overlay Label */}
-             <div className="absolute top-8 right-8 bg-black/80 backdrop-blur-md p-4 rounded-2xl border border-white/10 z-20 hidden md:block">
-                <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-1">Landmark</p>
-                <p className="text-sm font-medium">Near Hayer Market Square</p>
+             {/* Simple floating info label that stays out of the way */}
+             <div className="absolute top-8 right-8 bg-black/80 backdrop-blur-md p-4 rounded-2xl border border-white/10 z-20 pointer-events-none hidden md:block">
+                <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-1">Live Map</p>
+                <p className="text-sm font-medium">Pan & Zoom to Explore</p>
              </div>
           </div>
         </div>

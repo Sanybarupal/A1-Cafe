@@ -1,21 +1,21 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { getFoodRecommendation } from '../services/geminiService.ts';
+import { getFoodRecommendation, ChatMessage } from '../services/geminiService.ts';
 
 export const AIAssistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const [messages, setMessages] = useState<{role: 'user' | 'ai', text: string}[]>([
-    { role: 'ai', text: "Namaste! 🙏 I'm your A1cafe Taste Buddy. I can recommend the perfect pizza, suggest a refreshing mocktail, or tell you about our special Thursday BOGO offer! What are you craving today?" }
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { role: 'ai', text: "Namaste! 🙏 I'm your A1cafe Taste Buddy. I can recommend the perfect pizza, suggest a refreshing shake, or tell you about our special Thursday BOGO offer! What are you craving today?" }
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const suggestions = [
-    "What's for BOGO Thursday? 🍕",
+    "Show me the full menu 📖",
+    "What's the BOGO offer? 🍕",
     "Suggest a spicy burger 🍔",
-    "Top rated beverages? ☕",
-    "Best pizza for a group? 🍕"
+    "Best shakes? 🥤"
   ];
 
   useEffect(() => {
@@ -30,14 +30,16 @@ export const AIAssistant: React.FC = () => {
   const handleSendMessage = async (text: string) => {
     if (!text.trim() || isLoading) return;
 
-    setMessages(prev => [...prev, { role: 'user', text }]);
+    const newMessages: ChatMessage[] = [...messages, { role: 'user', text }];
+    setMessages(newMessages);
     setIsLoading(true);
 
     try {
-      const aiResponse = await getFoodRecommendation(text);
+      // Pass the previous messages as history (excluding the first welcome message if preferred)
+      const aiResponse = await getFoodRecommendation(text, messages);
       setMessages(prev => [...prev, { role: 'ai', text: aiResponse }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'ai', text: "Sorry, I'm a bit full right now. Can you try again in a moment? 😅" }]);
+      setMessages(prev => [...prev, { role: 'ai', text: "Sorry, I'm a bit full right now. Can you try again? 😅" }]);
     } finally {
       setIsLoading(false);
     }
@@ -45,6 +47,7 @@ export const AIAssistant: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!query.trim()) return;
     const text = query;
     setQuery('');
     handleSendMessage(text);
@@ -54,7 +57,7 @@ export const AIAssistant: React.FC = () => {
     <div className="fixed bottom-6 right-6 z-[100]">
       {/* Chat Window */}
       {isOpen && (
-        <div className="absolute bottom-20 right-0 w-[90vw] sm:w-[400px] h-[600px] bg-white rounded-[40px] shadow-2xl flex flex-col overflow-hidden border border-orange-100 animate-in fade-in slide-in-from-bottom-10 duration-500">
+        <div className="absolute bottom-24 right-0 w-[90vw] sm:w-[420px] h-[650px] bg-white rounded-[40px] shadow-2xl flex flex-col overflow-hidden border border-orange-100 animate-in fade-in slide-in-from-bottom-10 duration-500">
           <div className="bg-[#1a1a1a] p-6 flex justify-between items-center text-white">
             <div className="flex items-center space-x-3">
               <div className="relative">
@@ -76,7 +79,7 @@ export const AIAssistant: React.FC = () => {
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#fafafa] no-scrollbar">
             {messages.map((m, idx) => (
               <div key={idx} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] p-4 rounded-3xl text-sm leading-relaxed shadow-sm ${
+                <div className={`max-w-[85%] p-4 rounded-3xl text-sm leading-relaxed shadow-sm whitespace-pre-line ${
                   m.role === 'user' 
                     ? 'bg-orange-600 text-white rounded-tr-none' 
                     : 'bg-white text-gray-800 rounded-tl-none border border-orange-100'
@@ -116,7 +119,7 @@ export const AIAssistant: React.FC = () => {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Ask me anything about the menu..."
+              placeholder="Ask for the menu, prices or deals..."
               className="flex-1 bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-orange-600 focus:bg-white outline-none transition-all"
             />
             <button 

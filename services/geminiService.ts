@@ -2,52 +2,67 @@
 import { GoogleGenAI } from "@google/genai";
 import { MENU_ITEMS, CAFE_INFO } from "../constants.tsx";
 
-export async function getFoodRecommendation(userQuery: string) {
+export interface ChatMessage {
+  role: 'user' | 'ai';
+  text: string;
+}
+
+export async function getFoodRecommendation(userQuery: string, history: ChatMessage[] = []) {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
-  const menuSummary = MENU_ITEMS.map(item => `${item.name} (${item.category}): ${item.description} - ${item.price}`).join('\n');
+  // Create a structured menu string for the AI's internal reference
+  const menuByCategory = MENU_ITEMS.reduce((acc: any, item) => {
+    if (!acc[item.category]) acc[item.category] = [];
+    acc[item.category].push(`${item.name} (₹${item.price.replace('₹', '')})`);
+    return acc;
+  }, {});
+
+  const menuString = Object.entries(menuByCategory)
+    .map(([cat, items]: [string, any]) => `### ${cat}:\n${items.join(', ')}`)
+    .join('\n\n');
+
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
   const isThursday = today === "Thursday";
 
   const systemInstruction = `
-    You are the "A1cafe Taste Buddy", the digital ambassador for A1cafe in Ramsinghpur, Rajasthan.
+    You are the "A1cafe Taste Buddy", a friendly AI concierge for A1cafe in Ramsinghpur.
     
-    Cafe Context:
-    - Name: ${CAFE_INFO.name}
-    - Location: ${CAFE_INFO.address} (Hayer Market, Main Road).
-    - Hours: ${CAFE_INFO.hours}.
-    - Vibes: Premium, friendly, modern, and the best spot in town.
-    
-    Special Offers:
-    - EVERY THURSDAY: BOGO (Buy One Get One FREE) on all Medium & Large Pizzas! 
-    - Today is ${today}. ${isThursday ? "IMPORTANT: Remind the user that the BOGO offer is active TODAY!" : "The BOGO offer is only on Thursdays."}
+    Location: ${CAFE_INFO.address}. 
+    Today is ${today}. ${isThursday ? "REMIND THE USER: It's BOGO Thursday! Buy 1 Get 1 Free on all Medium/Large Pizzas." : "Mention that BOGO Thursday is coming if they ask for deals."}
 
-    Menu Inventory:
-    ${menuSummary}
+    FULL MENU LIST:
+    ${menuString}
     
-    Interaction Rules:
-    1. Be incredibly friendly and helpful (use "Namaste", "Ji", or casual Hinglish vibes if appropriate, but keep it professional).
-    2. Only recommend items from our actual menu.
-    3. If they ask for something we don't have, steer them towards our signatures: Double Cheese Burger, White Sauce Pasta, or Paneer Pizza.
-    4. Highlight the BOGO offer whenever someone asks about Pizza or "Offers".
-    5. Mention our location details if they ask how to reach us.
-    6. Keep responses appetizing and use emojis (🍔, 🍕, ☕, ✨).
+    RULES FOR REPLIES:
+    1. If the user asks for the "menu", "list", or "what do you have", respond with a beautifully formatted list organized by category (e.g., Beverages, Burgers, Pizzas).
+    2. Use bullet points and bold text for clarity.
+    3. Be appetizing! Use emojis like 🍕, 🍔, ☕, 🥤, 🍰.
+    4. If they ask about a specific category (e.g., "What shakes do you have?"), list ONLY those items.
+    5. Mention that last order is at 10:30 PM.
+    6. Always be polite. Use Hinglish if the user does (e.g., "Ji", "Zaroor", "Bilkul").
   `;
+
+  const formattedHistory = history.map(h => ({
+    role: h.role === 'user' ? 'user' : 'model',
+    parts: [{ text: h.text }]
+  }));
 
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: userQuery,
+      contents: [
+        ...formattedHistory,
+        { role: 'user', parts: [{ text: userQuery }] }
+      ],
       config: {
         systemInstruction,
-        temperature: 0.8,
-        topP: 0.95,
+        temperature: 0.7,
       },
     });
 
-    return response.text || "I'm having a little trouble thinking. How about our signature Classic A1 Burger? 🍔";
+    return response.text || "I'm looking for the menu right now! How about a Paneer Pizza in the meantime? 🍕";
   } catch (error) {
     console.error("Gemini Error:", error);
-    return "I'm currently taking a short break! But I always recommend our Farmhouse Special Pizza! 🍕";
+    return "I'm currently updating our special recipes! But I can tell you our Double Cheese Burger is a bestseller! 🍔";
   }
 }
